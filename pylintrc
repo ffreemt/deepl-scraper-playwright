@@ -1,0 +1,7 @@
+[EXCEPTIONS]
+# C0301 line too long
+# R0801 dup
+# C0103 invalid-name
+# W0612 unused-variable
+# W0611 unused-import
+disable=W0703,R0801,C0103,C0301,W0612,W0611

@@ -1,0 +1,9 @@
+{
+   "include": ["tests", "deepl_scraper_pw"],
+  "venvPath": ".venv",
+  "reportTypeshedErrors": false,
+  "reportMissingImports": true,
+  "reportMissingTypeStubs": false,
+  "pythonVersion": "3.8",
+  "ignore": []
+}
