@@ -19,8 +19,22 @@ from pprint import pprint
 from deepl_scraper_pw import deepl_tr
 
 pprint(deepl_tr("Test me\n\nTest him"))
+# '测试我\n\n测试他'
 
+pprint(deepl_tr("Test me\n\nTest him", from_lang="en", to_lang="de"))
+# 'Teste mich\n\nTesten Sie ihn'
+```
+## Debug
+Should something go wrong, you can turn on HEADFUL (a firefox browser will show up). Place .env in the current work directory, with the following content:
+```bash
+PWBROWSER_HEADFUL=1
+```
 
-pprint(deepl_tr("Test me\n\nTest him"), from_lang="en", to_lang="de")
-
+You can also set DEBUG env variable to turn on detailed debug messages, in Windows:
+```
+set DEBUG=1
+```
+In Linux and friends
+```
+export DEBUG=1
 ```
