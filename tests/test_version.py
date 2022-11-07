@@ -1,7 +1,6 @@
 """Test deepl_scraper_pw."""
 # pylint: disable=broad-except
-from deepl_scraper_pw import __version__
-from deepl_scraper_pw import deepl_scraper_pw
+from deepl_scraper_pw import __version__, deepl_tr
 
 
 def test_version():
@@ -12,6 +11,6 @@ def test_version():
 def test_sanity():
     """Check sanity."""
     try:
-        assert not deepl_scraper_pw()
+        assert not deepl_tr("")
     except Exception:
         assert True
