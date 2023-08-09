@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "deepl-scraper-pw"
-version = "0.1.0a1"
+version = "0.1.0a2"
 description = "Scrape deepl using playwright"
 authors = ["ffreemt"]
 license = "MIT"
