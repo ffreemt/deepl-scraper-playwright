@@ -1,4 +1,5 @@
-"""Scrape deepl via playwright (get_pwbrowser_sync).
+"""
+Scrape deepl via playwright (get_pwbrowser_sync).
 
 org deepl_tr_pp
 
@@ -7,8 +8,8 @@ from pathlib import Path
 os.environ['PYTHONPATH'] = Path(r"../get-pwbrowser-sync")
 """
 import os
-import sys
 import re
+import sys
 from random import randint
 from time import sleep
 from typing import Any, Callable, Optional, Union
@@ -16,7 +17,8 @@ from urllib.parse import quote
 
 import logzero
 from about_time import about_time
-from get_pwbrowser_sync import get_pwbrowser_sync as get_pwbrowser, loop
+from get_pwbrowser_sync import get_pwbrowser_sync as get_pwbrowser
+from get_pwbrowser_sync import loop
 from logzero import logger
 from pyquery import PyQuery as pq
 
@@ -24,25 +26,28 @@ URL = r"https://www.deepl.com/translator"
 
 
 def with_func_attrs(**attrs: Any) -> Callable:
-    ''' with_func_attrs '''
+    """with_func_attrs."""
+
     def with_attrs(fct: Callable) -> Callable:
         for key, val in attrs.items():
             setattr(fct, key, val)
         return fct
+
     return with_attrs
 
 
 @with_func_attrs(from_lang="", to_lang="", text="")
 def deepl_tr(
     text: str,
-    from_lang: str = "auto",
-    to_lang: str = "zh",
+    from_lang: Optional[str] = "auto",
+    to_lang: Optional[str] = "zh",
     page=None,
     verbose: Union[bool, int] = False,
     timeout: float = 5,
-    headless: Optional[bool] = None
+    headless: Optional[bool] = None,
 ):
-    """Deepl via playwright-sync.
+    r"""
+    Deepl via playwright-sync.
 
     text = "Test it and\n\n more"
     from_lang="auto"
@@ -50,6 +55,11 @@ def deepl_tr(
     to_lang="zh"
     verbose=True
     """
+    if from_lang is None:
+        from_lang = "auto"
+    if to_lang is None:
+        to_lang = "zh"
+
     # set verbose=40 to turn most things off
     if isinstance(verbose, bool):
         if verbose:
@@ -58,10 +68,10 @@ def deepl_tr(
             logzero.setup_default_logger(level=20)
     else:  # integer: log_level
         logzero.setup_default_logger(level=verbose)
-    
+
     if os.environ.get("DEBUG"):
         logzero.loglevel(10)
-        
+
     logger.debug(" Entry ")
 
     try:
@@ -73,10 +83,18 @@ def deepl_tr(
 
     # if text remains the same but from_lang or to_lang changed, attach random string \d_
     # if text.strip() == deepl_tr.strip() and (deepl_tr.from_lang
-    logger.debug("text==deepl_tr.text: %s==%s, from_lang==deepl_tr.from_lang: %s==%s, to_lang==deepl_tr.to_lang: %s==%s", text, deepl_tr.text, from_lang, deepl_tr.from_lang, to_lang, deepl_tr.to_lang)
-    
+    logger.debug(
+        "text==deepl_tr.text: %s==%s, from_lang==deepl_tr.from_lang: %s==%s, to_lang==deepl_tr.to_lang: %s==%s",
+        text,
+        deepl_tr.text,
+        from_lang,
+        deepl_tr.from_lang,
+        to_lang,
+        deepl_tr.to_lang,
+    )
+
     same_langs = from_lang == deepl_tr.from_lang and to_lang == deepl_tr.to_lang
-    
+
     if text == deepl_tr.text:
         if not same_langs:
             deepl_tr.text = text
@@ -90,7 +108,7 @@ def deepl_tr(
 
     # reuse page
     try:
-        deepl_tr.page  # run previsously
+        deepl_tr.page  # run previously
         page = deepl_tr.page
     except AttributeError:
         if page is None:
@@ -98,7 +116,7 @@ def deepl_tr(
                 if headless is None:
                     browser = get_pwbrowser()
                 else:
-                    browser = get_pwbrowser(headless=headless)
+                    browser = get_pwbrowser(headless=bool(headless))
             except Exception as exc:
                 logger.error(exc)
                 raise
@@ -150,9 +168,12 @@ def deepl_tr(
         except AttributeError:
             deepl_tr.first_run = 1
             text_old = "_some unlikely random text_"
-        
-        logger.debug("text.strip(): %s, text_old.strip(): %s", text.strip(), text_old.strip())
-        
+
+        logger.debug("text: %s, text_old: %s", text, text_old)
+        logger.debug(
+            "text.strip(): %s, text_old.strip(): %s", text.strip(), text_old.strip()
+        )
+
         # selector = "div.lmt__translations_as_text"
         if text.strip() == text_old.strip() and same_langs:
             logger.debug(" ** early result: ** ")
@@ -200,7 +221,8 @@ def deepl_tr(
                 raise
 
             doc = pq(page.content())
-            content = doc(".lmt__translations_as_text__text_btn").text()
+            # content = doc(".lmt__translations_as_text__text_btn").text()
+            content = doc(".lmt__translations_as_text__text_btn").html()  # preserver \n
 
             logger.debug("content_old: [%s], \n\t content: [%s]", content_old, content)
 
@@ -233,17 +255,17 @@ def deepl_tr(
 
 
 def main():
-    """Main."""
+    """Define main."""
     text = "test this and that and more"
     res = deepl_tr(text)
     logger.info("%s, %s, time elased: %s", text, res, deepl_tr.dur)
 
-    res = deepl_tr(text, to_lang='de')
+    res = deepl_tr(text, to_lang="de")
 
     logger.info("%s, %s, time elased: %s", text, res, deepl_tr.dur)
-    
+
     # input("Press Enter to continue...")
-    
+
     if len(sys.argv) > 1:
         text = " ".join(sys.argv[1:])
     else:
@@ -252,13 +274,13 @@ def main():
     res = deepl_tr(text)
 
     logger.info("%s, %s, time elased: %s", text, res, deepl_tr.dur)
-    
+
     res = deepl_tr(text, to_lang="de")
 
     logger.info("%s, %s, time elased: %s", text, res, deepl_tr.dur)
-    
+
     # input("Press Enter to continue...")
-    
+
     # stop loop, will close all browsers
     loop.stop()
     del deepl_tr.page
@@ -272,4 +294,3 @@ if __name__ == "__main__":
     except Exception as exc:
         logger.error(exc)
     # """
-    

@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "deepl-scraper-pw"
-version = "0.1.0-alpha.0"
+version = "0.1.0a1"
 description = "Scrape deepl using playwright"
 authors = ["ffreemt"]
 license = "MIT"
@@ -15,6 +15,10 @@ icecream = "^2.1.1"
 install = "^1.3.5"
 about-time = "^4.1.0"
 get-pwbrowser-sync = "^0.1.2"
+nest-asyncio = "^1.5.6"
+
+[tool.poetry.group.dev.dependencies]
+ruff = "^0.0.283"
 
 [tool.poe.executor]
 type = "poetry"

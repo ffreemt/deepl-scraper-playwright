@@ -27,4 +27,6 @@ jobs:
           poetry run flake8 --exit-zero
           # poetry run pytest
       - name: Run pytest
-        run: poetry run pytest tests
+        run: |
+          poetry run pytest tests -k phrase
+          poetry run pytest tests -k para_info
